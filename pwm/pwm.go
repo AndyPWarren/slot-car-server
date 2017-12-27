@@ -7,12 +7,12 @@ import (
 	rpio "github.com/stianeikeland/go-rpio"
 )
 
-func HighDuration(freq float32, dc float32) time.Duration {
+func highDuration(freq float32, dc float32) time.Duration {
 	val := freq * dc
 	return time.Duration(val) * time.Millisecond
 }
 
-func LowDuration(freq float32, dc float32) time.Duration {
+func lowDuration(freq float32, dc float32) time.Duration {
 	val := freq * (1 - dc)
 	return time.Duration(val) * time.Millisecond
 }
@@ -27,8 +27,8 @@ type Pwm struct {
 func run(pwm *Pwm) {
 	fmt.Printf("running: %v", pwm.Pin)
 	freqMs := float32(1000 / pwm.Freq)
-	high := HighDuration(freqMs, 0)
-	low := LowDuration(freqMs, 0)
+	high := highDuration(freqMs, 0)
+	low := lowDuration(freqMs, 0)
 	for {
 		select {
 		case r := <-pwm.Running:
@@ -39,8 +39,8 @@ func run(pwm *Pwm) {
 			}
 		case dc := <-pwm.Dc:
 			fmt.Printf("duty cycle: %v", dc)
-			high = HighDuration(freqMs, dc)
-			low = LowDuration(freqMs, dc)
+			high = highDuration(freqMs, dc)
+			low = lowDuration(freqMs, dc)
 		default:
 			pwm.Pin.High()
 			time.Sleep(high)

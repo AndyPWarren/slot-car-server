@@ -54,7 +54,7 @@ testdata:
 	go test -v $(TEST_PKGS) -update
 
 deploy:
-	scp -i ~/.ssh/andy@pi leds.linux-arm andy@192.168.0.27:~
+	scp -i ~/.ssh/andy@pi leds.linux-arm andy@raspberrypi:~
 
 buildpi:
 	make linuxarm

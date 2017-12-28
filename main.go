@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"os/signal"
 	"syscall"
@@ -25,6 +26,10 @@ func cleanUp() {
 	}
 }
 
+func square(val float64) float64 {
+	return math.Pow(val, 2)
+}
+
 func watchForKill() {
 	killchan := make(chan os.Signal, 2)
 	signal.Notify(killchan, os.Interrupt, syscall.SIGTERM)
@@ -40,6 +45,10 @@ func main() {
 	go watchForKill()
 	fmt.Printf("Running\n")
 
-	blaster.Apply(yellowLed, 0.1)
-	time.Sleep(time.Second * 5)
+	for i := 0; i < 11; i++ {
+		step := float64(i) / 10
+		blaster.Apply(redLed, square(step))
+		blaster.Apply(yellowLed, step)
+		time.Sleep(time.Second)
+	}
 }

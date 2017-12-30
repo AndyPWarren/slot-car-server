@@ -16,11 +16,12 @@ type Message struct {
 	value float64
 }
 
-const redLed = 17
-const yellowLed = 27
-const greenLed = 22
+type Led struct {
+	Color string
+	Pin   int64
+}
 
-var leds = []int64{redLed, yellowLed, greenLed}
+var allLeds = make(map[string]int64)
 
 var blaster = piblaster.Blaster{}
 
@@ -29,7 +30,7 @@ func square(val float64) float64 {
 }
 
 func cleanUp() {
-	for _, led := range leds {
+	for _, led := range allLeds {
 		blaster.Apply(led, 0)
 	}
 }
@@ -43,24 +44,24 @@ func watchForKill() {
 	os.Exit(0)
 }
 
-func Setup() {
-	blaster.Start(leds)
+func Setup(leds []Led) {
+	pins := make([]int64, len(leds))
+	for i, led := range leds {
+		allLeds[led.Color] = led.Pin
+		pins[i] = led.Pin
+	}
+	blaster.Start(pins)
 	defer cleanUp()
 	go watchForKill()
 }
 
 func Apply(inputColor string, value float64) error {
-	var color int64
-	switch inputColor {
-	case "red":
-		color = redLed
-	case "yellow":
-		color = yellowLed
-	case "green":
-		color = greenLed
-	default:
+	var pin int64
+	if allLeds[inputColor] != 0 {
+		pin = allLeds[inputColor]
+	} else {
 		return fmt.Errorf("color not recognized: %v", inputColor)
 	}
-	blaster.Apply(color, value)
+	blaster.Apply(pin, value)
 	return nil
 }

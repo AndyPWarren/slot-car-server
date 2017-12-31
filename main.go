@@ -19,6 +19,7 @@ func getLeds(w http.ResponseWriter, r *http.Request) {
 		i++
 	}
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	data, err := json.Marshal(colors)
 	if err != nil {

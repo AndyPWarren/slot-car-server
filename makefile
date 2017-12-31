@@ -1,3 +1,6 @@
+# Pi environment varibles
+_PI_USER := $(if $(PI_USER),$(PI_USER),$(USER))
+_PI_SSH_KEY := $(if $(PI_SSH_KEY),$(PI_SSH_KEY),'~/.ssh/id_rsa')
 # Compilation Flags
 GOOS            ?=
 GOARCH          ?=
@@ -7,9 +10,6 @@ FLAGS           ?=
 BUILD_TIME_LDFLAG       ?= -X main.timestamp=$(shell date +%s)
 BUILD_VERSION_LDFLAG    ?= -X main.version=$(shell git rev-parse HEAD)
 LDFLAGS                 ?= "$(BUILD_TIME_LDFLAG) $(BUILD_VERSION_LDFLAG)"
-# Docker Configuration
-DOCKER_IMAGE    ?= registry.spectrakey.co.uk/firstmate/tripsvc
-DOCKER_TAG      ?= latest
 # Binary Name
 BIN_NAME        ?= leds
 BIN_SUFFIX      ?=
@@ -54,7 +54,7 @@ testdata:
 	go test -v $(TEST_PKGS) -update
 
 deploy:
-	scp -i ~/.ssh/andy@pi leds.linux-arm andy@raspberrypi:~
+	scp -i $(_PI_SSH_KEY) leds.linux-arm $(_PI_USER)@raspberrypi:~
 
 buildpi:
 	make linuxarm

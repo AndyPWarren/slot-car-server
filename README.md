@@ -5,16 +5,16 @@ A server that allows communications with the RaspberryPi GPIO pins, specifically
 ## Build
 First clone the project to your machine via the usual git commands
 
-Then build a binary for the raspberry simply run:
+Build a binary for the raspberry simply run:
 ```
 make linuxarm
 ```
-Then deploy it to the Pi using SSH:
+Deploying SCP's the binary to the raspberrypi. By default it uses the `id_rsa` key and the current `$USER` environment variable. These can be overridden by exporting `PI_USER` and `PI_SSH_KEY` respectively. Then run:
 ```
 make deploy
 ```
 
-ssh into the raspberry pi. The binary will have been placed in the home directory.
+SSH into the raspberry pi. The binary will have been placed in the users home directory.
 
 Start the server, passing in arguments to configure the Led pins. Pin configuration is in the format `<color>=<bcm-pin-no>` with a space separating the pins, for example:
 ```

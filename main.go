@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,7 +11,25 @@ import (
 	"strconv"
 )
 
+func getLeds(w http.ResponseWriter, r *http.Request) {
+	colors := make([]string, len(leds.AllLeds))
+	i := 0
+	for led := range leds.AllLeds {
+		colors[i] = led
+		i++
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	data, err := json.Marshal(colors)
+	if err != nil {
+		panic(err)
+	}
+	w.Header().Set("Content-Length", fmt.Sprint(len(data)))
+	fmt.Fprint(w, string(data))
+}
+
 func server() {
+	http.HandleFunc("/leds", getLeds)
 	http.HandleFunc("/", socket.Handler)     // set router
 	err := http.ListenAndServe(":9090", nil) // set listen port
 	if err != nil {

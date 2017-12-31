@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"fmt"
@@ -6,8 +6,8 @@ import (
 )
 
 type KeyValue struct {
-	key   string
-	value string
+	Key   string
+	Value string
 }
 
 func ParseKeyValueStr(str string, sep string) (error, KeyValue) {

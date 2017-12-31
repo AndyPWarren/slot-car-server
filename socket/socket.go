@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 	"pi/leds/leds"
+	"pi/leds/utils"
 	"strconv"
-	"strings"
 
 	"github.com/gorilla/websocket"
 )
@@ -30,13 +30,13 @@ func WriteMessage(m string) {
 }
 
 func parseMessage(m string) {
-	split := strings.Split(m, "=")
-	if len(split) == 1 {
-		WriteMessage(fmt.Sprintf("message %v is in the wrong format", m))
+	err, parsedM := utils.ParseKeyValueStr(m, "=")
+	if err != nil {
+		WriteMessage(err.Error())
 		return
 	}
-	color := split[0]
-	value, err := strconv.ParseFloat(split[1], 64)
+	color := parsedM.Key
+	value, err := strconv.ParseFloat(parsedM.Value, 64)
 	if err != nil {
 		WriteMessage(fmt.Sprintf("error converting %v to float: %v", value, err))
 		return

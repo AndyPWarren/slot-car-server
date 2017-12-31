@@ -8,6 +8,7 @@ import (
 	"os"
 	"pi/leds/leds"
 	"pi/leds/socket"
+	"pi/leds/utils"
 	"strconv"
 )
 
@@ -42,13 +43,13 @@ func main() {
 	args := os.Args[1:]
 	allLeds := make(map[string]int64)
 	for _, arg := range args {
-		err, parsedArg := ParseKeyValueStr(arg, "=")
+		err, parsedArg := utils.ParseKeyValueStr(arg, "=")
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(1)
 		} else {
-			val, _ := strconv.ParseInt(parsedArg.value, 0, 64)
-			allLeds[parsedArg.key] = val
+			val, _ := strconv.ParseInt(parsedArg.Value, 0, 64)
+			allLeds[parsedArg.Key] = val
 		}
 	}
 	leds.Setup(allLeds)

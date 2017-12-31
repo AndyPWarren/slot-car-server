@@ -40,15 +40,15 @@ func server() {
 
 func main() {
 	args := os.Args[1:]
-	allLeds := make([]leds.Led, len(args))
-	for i, arg := range args {
+	allLeds := make(map[string]int64)
+	for _, arg := range args {
 		err, parsedArg := ParseKeyValueStr(arg, "=")
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(1)
 		} else {
 			val, _ := strconv.ParseInt(parsedArg.value, 0, 64)
-			allLeds[i] = leds.Led{parsedArg.key, val}
+			allLeds[parsedArg.key] = val
 		}
 	}
 	leds.Setup(allLeds)

@@ -11,16 +11,6 @@ import (
 	piblaster "github.com/ddrager/go-pi-blaster"
 )
 
-type Message struct {
-	color string
-	value float64
-}
-
-type Led struct {
-	Color string
-	Pin   int64
-}
-
 var AllLeds = make(map[string]int64)
 
 var blaster = piblaster.Blaster{}
@@ -30,8 +20,8 @@ func square(val float64) float64 {
 }
 
 func cleanUp() {
-	for _, led := range AllLeds {
-		blaster.Apply(led, 0)
+	for _, pin := range AllLeds {
+		blaster.Apply(pin, 0)
 	}
 }
 
@@ -44,11 +34,13 @@ func watchForKill() {
 	os.Exit(0)
 }
 
-func Setup(leds []Led) {
+func Setup(leds map[string]int64) {
+	AllLeds = leds
 	pins := make([]int64, len(leds))
-	for i, led := range leds {
-		AllLeds[led.Color] = led.Pin
-		pins[i] = led.Pin
+	i := 0
+	for _, val := range leds {
+		pins[i] = val
+		i++
 	}
 	blaster.Start(pins)
 	defer cleanUp()
@@ -62,6 +54,6 @@ func Apply(inputColor string, value float64) error {
 	} else {
 		return fmt.Errorf("color not recognized: %v", inputColor)
 	}
-	blaster.Apply(pin, value)
+	blaster.Apply(pin, square(value))
 	return nil
 }

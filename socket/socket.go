@@ -30,7 +30,7 @@ func WriteMessage(m string) {
 }
 
 func parseMessage(m string) {
-	err, parsedM := utils.ParseKeyValueStr(m, "=")
+	parsedM, err := utils.ParseKeyValueStr(m, "=")
 	if err != nil {
 		WriteMessage(err.Error())
 		return

@@ -43,7 +43,7 @@ func main() {
 	args := os.Args[1:]
 	allLeds := make(map[string]int64)
 	for _, arg := range args {
-		err, parsedArg := utils.ParseKeyValueStr(arg, "=")
+		parsedArg, err := utils.ParseKeyValueStr(arg, "=")
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(1)

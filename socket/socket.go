@@ -21,14 +21,6 @@ var upgrader = websocket.Upgrader{
 
 var conn *websocket.Conn
 
-func WriteMessage(m string) {
-	byteMessage := []byte(m)
-	if err := conn.WriteMessage(1, byteMessage); err != nil {
-		log.Println(err)
-		return
-	}
-}
-
 func parseMessage(m string) {
 	parsedM, err := utils.ParseKeyValueStr(m, "=")
 	if err != nil {
@@ -47,6 +39,17 @@ func parseMessage(m string) {
 	}
 }
 
+// WriteMessage takes a string message (m) and sends it onto the socket connection
+func WriteMessage(m string) {
+	byteMessage := []byte(m)
+	if err := conn.WriteMessage(1, byteMessage); err != nil {
+		log.Println(err)
+		return
+	}
+}
+
+// Handler takes a ResponseWriter and request and upgrades it to a socket connection
+// It reads the incoming message and parses it
 func Handler(w http.ResponseWriter, r *http.Request) {
 	connection, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -59,9 +62,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Println(err)
 			return
-		} else {
-			parseMessage(string(p))
 		}
-
+		parseMessage(string(p))
 	}
 }

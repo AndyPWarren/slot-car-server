@@ -11,6 +11,8 @@ import (
 	piblaster "github.com/ddrager/go-pi-blaster"
 )
 
+// AllLeds is a map of configured leds where the key is the color of the led and int64 is the pin value
+// for that color
 var AllLeds = make(map[string]int64)
 
 var blaster = piblaster.Blaster{}
@@ -34,6 +36,9 @@ func watchForKill() {
 	os.Exit(0)
 }
 
+// Setup performs initial pi-blaster setup.
+// It takes a map of led color to pin number,
+// starts pi-blaster with these pins and starts the clean up watch tasks
 func Setup(leds map[string]int64) {
 	AllLeds = leds
 	pins := make([]int64, len(leds))
@@ -47,6 +52,7 @@ func Setup(leds map[string]int64) {
 	go watchForKill()
 }
 
+// Apply takes a color and a brightness value and applies it to the pi-blaster, if the input color has been configured. If it hasn't it returns an error
 func Apply(inputColor string, value float64) error {
 	var pin int64
 	if AllLeds[inputColor] != 0 {

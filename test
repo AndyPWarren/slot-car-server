@@ -1,0 +1,13 @@
+func TestHighDuration(t *testing.T) {
+	case1 := NewDurationTestCase("equal duty cycle", 100, 0.5, 5)
+	case2 := NewDurationTestCase("low frequency", 1, 0.9, 900)
+	case3 := NewDurationTestCase("short duty cycle", 100, 0.1, 1)
+	tests := [3]DurationTestCase{case1, case2, case3}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if result := highDuration(test.freq, test.dc); result != test.expected {
+				t.Error(test, result)
+			}
+		})
+	}
+}

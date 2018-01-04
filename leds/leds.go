@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	piblaster "github.com/ddrager/go-pi-blaster"
+	piblaster "github.com/AndyPWarren/go-pi-blaster"
 )
 
 // AllLeds is a map of configured leds where the key is the color of the led and int64 is the pin value

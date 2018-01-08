@@ -6,23 +6,23 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"pi/leds/leds"
+	"pi/leds/pins"
 	"pi/leds/socket"
 	"pi/leds/utils"
 	"strconv"
 )
 
-func getLeds(w http.ResponseWriter, r *http.Request) {
-	colors := make([]string, len(leds.AllLeds))
+func getPins(w http.ResponseWriter, r *http.Request) {
+	pinNames := make([]string, len(pins.AllPins))
 	i := 0
-	for led := range leds.AllLeds {
-		colors[i] = led
+	for pin := range pins.AllPins {
+		pinNames[i] = pin
 		i++
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
-	data, err := json.Marshal(colors)
+	data, err := json.Marshal(pinNames)
 	if err != nil {
 		panic(err)
 	}
@@ -31,7 +31,7 @@ func getLeds(w http.ResponseWriter, r *http.Request) {
 }
 
 func server() {
-	http.HandleFunc("/leds", getLeds)
+	http.HandleFunc("/lanes", getPins)
 	http.HandleFunc("/", socket.Handler)     // set router
 	err := http.ListenAndServe(":9090", nil) // set listen port
 	if err != nil {
@@ -41,7 +41,7 @@ func server() {
 
 func main() {
 	args := os.Args[1:]
-	allLeds := make(map[string]int64)
+	allPins := make(map[string]int64)
 	for _, arg := range args {
 		parsedArg, err := utils.ParseKeyValueStr(arg, "=")
 		if err != nil {
@@ -49,9 +49,9 @@ func main() {
 			os.Exit(1)
 		} else {
 			val, _ := strconv.ParseInt(parsedArg.Value, 0, 64)
-			allLeds[parsedArg.Key] = val
+			allPins[parsedArg.Key] = val
 		}
 	}
-	leds.Setup(allLeds)
+	pins.Setup(allPins)
 	server()
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"pi/leds/leds"
+	"pi/leds/pins"
 	"pi/leds/utils"
 	"strconv"
 
@@ -37,7 +37,7 @@ func parseMessage(m string) error {
 	if parsingErr != nil {
 		return fmt.Errorf("error converting %v to float: %v", value, parsingErr)
 	}
-	applyErr := leds.Apply(color, value)
+	applyErr := pins.Apply(color, value)
 	if applyErr != nil {
 		return applyErr
 	}

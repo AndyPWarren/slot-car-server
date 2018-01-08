@@ -1,4 +1,4 @@
-package leds
+package pins
 
 import (
 	"fmt"
@@ -11,9 +11,9 @@ import (
 	piblaster "github.com/AndyPWarren/go-pi-blaster"
 )
 
-// AllLeds is a map of configured leds where the key is the color of the led and int64 is the pin value
+// AllPins is a map of configured leds where the key is the color of the led and int64 is the pin value
 // for that color
-var AllLeds = make(map[string]int64)
+var AllPins = make(map[string]int64)
 
 var blaster = piblaster.Blaster{}
 
@@ -22,8 +22,9 @@ func square(val float64) float64 {
 }
 
 func cleanUp() {
-	for _, pin := range AllLeds {
-		blaster.Apply(pin, 0)
+	for _, pin := range AllPins {
+		fmt.Printf("cleaning up pin: %v \n", pin)
+		// blaster.Apply(pin, 0)
 	}
 }
 
@@ -39,27 +40,29 @@ func watchForKill() {
 // Setup performs initial pi-blaster setup.
 // It takes a map of led color to pin number,
 // starts pi-blaster with these pins and starts the clean up watch tasks
-func Setup(leds map[string]int64) {
-	AllLeds = leds
-	pins := make([]int64, len(leds))
+func Setup(pins map[string]int64) {
+	AllPins = pins
+	bcmPins := make([]int64, len(pins))
 	i := 0
-	for _, val := range leds {
-		pins[i] = val
+	for _, val := range pins {
+		bcmPins[i] = val
 		i++
 	}
-	blaster.Start(pins)
+	fmt.Printf("starting pins: %v", bcmPins)
+	// blaster.Start(bcmPins)
 	defer cleanUp()
 	go watchForKill()
 }
 
 // Apply takes a color and a brightness value and applies it to the pi-blaster, if the input color has been configured. If it hasn't it returns an error
-func Apply(inputColor string, value float64) error {
+func Apply(pinName string, value float64) error {
 	var pin int64
-	if AllLeds[inputColor] != 0 {
-		pin = AllLeds[inputColor]
+	if AllPins[pinName] != 0 {
+		pin = AllPins[pinName]
 	} else {
-		return fmt.Errorf("color not recognized: %v", inputColor)
+		return fmt.Errorf("pin not recognized: %v", pinName)
 	}
-	blaster.Apply(pin, square(value))
+	fmt.Printf("applying %v to pin: %v \n", value, pin)
+	// blaster.Apply(pin, square(value))
 	return nil
 }

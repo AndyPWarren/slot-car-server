@@ -11,9 +11,18 @@ import (
 	piblaster "github.com/AndyPWarren/go-pi-blaster"
 )
 
+type Pin struct {
+	BcmPin int64
+	Active bool
+}
+
+func NewPin(bcmPin int64) *Pin {
+	return &Pin{bcmPin, false}
+}
+
 // AllPins is a map of configured leds where the key is the color of the led and int64 is the pin value
 // for that color
-var AllPins = make(map[string]int64)
+var AllPins = make(map[string]*Pin)
 
 var blaster = piblaster.Blaster{}
 
@@ -40,15 +49,15 @@ func watchForKill() {
 // Setup performs initial pi-blaster setup.
 // It takes a map of led color to pin number,
 // starts pi-blaster with these pins and starts the clean up watch tasks
-func Setup(pins map[string]int64) {
+func Setup(pins map[string]*Pin) {
 	AllPins = pins
 	bcmPins := make([]int64, len(pins))
 	i := 0
 	for _, val := range pins {
-		bcmPins[i] = val
+		bcmPins[i] = val.BcmPin
 		i++
 	}
-	fmt.Printf("starting pins: %v", bcmPins)
+	fmt.Printf("starting pins: %v \n", bcmPins)
 	// blaster.Start(bcmPins)
 	defer cleanUp()
 	go watchForKill()
@@ -57,8 +66,8 @@ func Setup(pins map[string]int64) {
 // Apply takes a color and a brightness value and applies it to the pi-blaster, if the input color has been configured. If it hasn't it returns an error
 func Apply(pinName string, value float64) error {
 	var pin int64
-	if AllPins[pinName] != 0 {
-		pin = AllPins[pinName]
+	if AllPins[pinName].BcmPin != 0 {
+		pin = AllPins[pinName].BcmPin
 	} else {
 		return fmt.Errorf("pin not recognized: %v", pinName)
 	}

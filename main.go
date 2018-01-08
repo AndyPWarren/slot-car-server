@@ -15,8 +15,8 @@ import (
 func getPins(w http.ResponseWriter, r *http.Request) {
 	pinNames := make([]string, len(pins.AllPins))
 	i := 0
-	for pin := range pins.AllPins {
-		pinNames[i] = pin
+	for key := range pins.AllPins {
+		pinNames[i] = key
 		i++
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -41,7 +41,7 @@ func server() {
 
 func main() {
 	args := os.Args[1:]
-	allPins := make(map[string]int64)
+	allPins := make(map[string]*pins.Pin)
 	for _, arg := range args {
 		parsedArg, err := utils.ParseKeyValueStr(arg, "=")
 		if err != nil {
@@ -49,7 +49,7 @@ func main() {
 			os.Exit(1)
 		} else {
 			val, _ := strconv.ParseInt(parsedArg.Value, 0, 64)
-			allPins[parsedArg.Key] = val
+			allPins[parsedArg.Key] = pins.NewPin(val)
 		}
 	}
 	pins.Setup(allPins)

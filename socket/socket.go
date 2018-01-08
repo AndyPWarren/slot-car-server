@@ -109,7 +109,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	}
 	client := &Client{conn: conn, send: make(chan []byte, 256)}
 	fmt.Printf("active pin is %v \n", available[0])
-	client.send <- []byte(available[0])
+	client.send <- []byte(fmt.Sprintf("channel=%v", available[0]))
 	activePin := pins.AllPins[available[0]]
 	activePin.Active = true
 	go client.read()

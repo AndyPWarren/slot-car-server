@@ -32,8 +32,8 @@ func square(val float64) float64 {
 
 func cleanUp() {
 	for _, pin := range AllPins {
-		fmt.Printf("cleaning up pin: %v \n", pin)
-		// blaster.Apply(pin, 0)
+		// fmt.Printf("cleaning up pin: %v \n", pin)
+		blaster.Apply(pin.BcmPin, 0)
 	}
 }
 
@@ -57,21 +57,20 @@ func Setup(pins map[string]*Pin) {
 		bcmPins[i] = val.BcmPin
 		i++
 	}
-	fmt.Printf("starting pins: %v \n", bcmPins)
-	// blaster.Start(bcmPins)
+	// fmt.Printf("starting pins: %v \n", bcmPins)
+	blaster.Start(bcmPins)
 	defer cleanUp()
 	go watchForKill()
 }
 
 // Apply takes a color and a brightness value and applies it to the pi-blaster, if the input color has been configured. If it hasn't it returns an error
 func Apply(pinName string, value float64) error {
-	var pin int64
-	if AllPins[pinName].BcmPin != 0 {
-		pin = AllPins[pinName].BcmPin
+	if pin, exists := AllPins[pinName]; exists == true {
+		pin := pin.BcmPin
+		// fmt.Printf("applying %v to pin: %v \n", value, pin)
+		blaster.Apply(pin, square(value))
+		return nil
 	} else {
 		return fmt.Errorf("pin not recognized: %v", pinName)
 	}
-	fmt.Printf("applying %v to pin: %v \n", value, pin)
-	// blaster.Apply(pin, square(value))
-	return nil
 }

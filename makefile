@@ -54,7 +54,7 @@ testdata:
 	go test -v $(TEST_PKGS) -update
 
 deploy:
-	scp -i $(_PI_SSH_KEY) ./bin/leds.linuxarm $(_PI_USER)@raspberrypi:~
+	scp -i $(_PI_SSH_KEY) ./bin/leds.linux-arm $(_PI_USER)@raspberrypi:~
 
 run:
 	./bin/$(BIN_NAME)$(BIN_SUFFIX)

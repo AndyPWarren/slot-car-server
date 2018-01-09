@@ -25,6 +25,9 @@ type Client struct {
 
 	// Buffered channel of outbound messages.
 	send chan []byte
+
+	// clients pin given when they make a connection
+	pin *pins.Pin
 }
 
 func parseMessage(m string) error {
@@ -71,6 +74,10 @@ func (c *Client) read() {
 	for {
 		_, message, err := c.conn.ReadMessage()
 		if err != nil {
+			if websocket.IsCloseError(err, websocket.CloseGoingAway) {
+				fmt.Printf("client closed the connection, release their pin, \n %v \n", err)
+				c.pin.Active = false
+			}
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
 				log.Printf("error: %v \n", err)
 			}
@@ -88,7 +95,6 @@ func (c *Client) read() {
 // Handler takes a ResponseWriter and request and upgrades it to a socket connection
 // It reads the incoming message and parses it
 func Handler(w http.ResponseWriter, r *http.Request) {
-	// get active pins
 	var available = []string{}
 	i := 0
 	for key, pin := range pins.AllPins {
@@ -107,7 +113,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	client := &Client{conn: conn, send: make(chan []byte, 256)}
+	client := &Client{conn: conn, send: make(chan []byte, 256), pin: pins.AllPins[available[0]]}
 	fmt.Printf("active pin is %v \n", available[0])
 	client.send <- []byte(fmt.Sprintf("channel=%v", available[0]))
 	activePin := pins.AllPins[available[0]]

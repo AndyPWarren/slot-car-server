@@ -20,8 +20,7 @@ func NewPin(bcmPin int64) *Pin {
 	return &Pin{bcmPin, false}
 }
 
-// AllPins is a map of configured leds where the key is the color of the led and int64 is the pin value
-// for that color
+// AllPins is a map of configured pins where the key is the pin name (lane number) and the value is a pin object
 var AllPins = make(map[string]*Pin)
 
 var blaster = piblaster.Blaster{}
@@ -47,7 +46,7 @@ func watchForKill() {
 }
 
 // Setup performs initial pi-blaster setup.
-// It takes a map of led color to pin number,
+// It takes a map of pin names to pins,
 // starts pi-blaster with these pins and starts the clean up watch tasks
 func Setup(pins map[string]*Pin) {
 	AllPins = pins
@@ -63,7 +62,7 @@ func Setup(pins map[string]*Pin) {
 	go watchForKill()
 }
 
-// Apply takes a color and a brightness value and applies it to the pi-blaster, if the input color has been configured. If it hasn't it returns an error
+// Apply takes a pin name and a value and applies it to the pi-blaster, if the pin name has been configured. If it hasn't it returns an error
 func Apply(pinName string, value float64) error {
 	if pin, exists := AllPins[pinName]; exists == true {
 		pin := pin.BcmPin

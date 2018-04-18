@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"pi/leds/pins"
-	"pi/leds/utils"
+	"pi/slot-car-server/pins"
+	"pi/slot-car-server/utils"
 	"strconv"
 
 	"github.com/gorilla/websocket"
@@ -73,6 +73,8 @@ func (c *Client) read() {
 	}()
 	for {
 		_, message, err := c.conn.ReadMessage()
+		fmt.Printf("error is %v\n", err)
+		fmt.Printf("message is %v\n", message)
 		if err != nil {
 			if websocket.IsCloseError(err, websocket.CloseGoingAway) {
 				fmt.Printf("client closed the connection, release their pin, \n %v \n", err)

@@ -6,9 +6,9 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"pi/leds/pins"
-	"pi/leds/socket"
-	"pi/leds/utils"
+	"pi/slot-car-server/pins"
+	"pi/slot-car-server/socket"
+	"pi/slot-car-server/utils"
 	"strconv"
 )
 

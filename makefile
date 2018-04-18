@@ -11,7 +11,7 @@ BUILD_TIME_LDFLAG       ?= -X main.timestamp=$(shell date +%s)
 BUILD_VERSION_LDFLAG    ?= -X main.version=$(shell git rev-parse HEAD)
 LDFLAGS                 ?= "$(BUILD_TIME_LDFLAG) $(BUILD_VERSION_LDFLAG)"
 # Binary Name
-BIN_NAME        ?= leds
+BIN_NAME        ?= slot-car-server
 BIN_SUFFIX      ?=
 ifneq ($(GOOS),)
 ifneq ($(GOARCH),)
@@ -54,7 +54,7 @@ testdata:
 	go test -v $(TEST_PKGS) -update
 
 deploy:
-	scp -i $(_PI_SSH_KEY) ./bin/leds.linux-arm $(_PI_USER)@raspberrypi:~
+	scp -i $(_PI_SSH_KEY) ./bin/$(BIN_NAME).linux-arm $(_PI_USER)@raspberrypi:~
 
 run:
 	./bin/$(BIN_NAME)$(BIN_SUFFIX)

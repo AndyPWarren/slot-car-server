@@ -73,10 +73,8 @@ func (c *Client) read() {
 	}()
 	for {
 		_, message, err := c.conn.ReadMessage()
-		fmt.Printf("error is %v\n", err)
-		fmt.Printf("message is %v\n", message)
 		if err != nil {
-			if websocket.IsCloseError(err, websocket.CloseGoingAway) {
+			if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
 				fmt.Printf("client closed the connection, release their pin, \n %v \n", err)
 				c.pin.Active = false
 			}
@@ -87,7 +85,6 @@ func (c *Client) read() {
 		}
 		// formatted := fmt.Sprintf("message received: %v \n", string(message))
 		parseMessageError := parseMessage(string(message))
-		fmt.Println(parseMessageError)
 		if parseMessageError != nil {
 			c.send <- []byte(parseMessageError.Error())
 		}
@@ -105,7 +102,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		}
 		i++
 	}
-	fmt.Printf("pins the are available: %v \n", available)
+	fmt.Printf("available pins: %v \n", available)
 	if len(available) == 0 {
 		fmt.Printf("no pins available \n")
 		return

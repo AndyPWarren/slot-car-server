@@ -1,6 +1,6 @@
-# Leds on the RaspberryPi
+# Slot Car Server on the RaspberryPi
 
-A server that allows communications with the RaspberryPi GPIO pins, specifically to control the brightness of LED's. The server creates a socket so brightness change events can be streamed to the Pi from a client. 
+A server that facilitates communication with RaspberryPi GPIO pins, specifically to control slot cars but could be used for any application where GPIO pins need to have PWM levels streamed. The server creates a socket which clients can stream events to. 
 
 ## Build
 First clone the project to your machine via the usual git commands
@@ -13,16 +13,13 @@ Deploying SCP's the binary to the raspberrypi. By default it uses the `id_rsa` k
 ```
 make deploy
 ```
-
+## Run
 SSH into the raspberry pi. The binary will have been placed in the users home directory.
 
-Start the server, passing in arguments to configure the Led pins. Pin configuration is in the format `<color>=<bcm-pin-no>` with a space separating the pins, for example:
+Start the server, passing in arguments to map the BCM pin number to a track number. This configuration is in the format `<track-number>=<bcm-pin-no>` with a space separating the pins, for example:
 ```
-./leds.linux-arm red=17 yellow=27
+./slot-car.linux-arm 1=17 2=27
 ```
-The server will have started and be listening on port `9090`
 
-An array of the he configured leds is available at `<raspberrypi-ip>:9090/leds`
-
-Brightness commands can now be sent to the socket in the format `<color>=<brightness>` where color is the led you want to control and brightness is a number between 0 and 1. `0` = off, `1` = max brightness
+Events can now be sent to the socket server in the format `<track-number>=<level>` where track-number is the track/pin you want to control and level is a number between 0 and 1. `0` = off, `1` = max 
 

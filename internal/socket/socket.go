@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"pi/slot-car-server/pins"
-	"pi/slot-car-server/utils"
 	"strconv"
+
+	"github.com/AndyPWarren/slot-car-server/internal/pins"
+	"github.com/AndyPWarren/slot-car-server/internal/utils"
 
 	"github.com/gorilla/websocket"
 )

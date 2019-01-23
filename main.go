@@ -6,10 +6,11 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"pi/slot-car-server/pins"
-	"pi/slot-car-server/socket"
-	"pi/slot-car-server/utils"
 	"strconv"
+
+	"github.com/AndyPWarren/slot-car-server/internal/pins"
+	"github.com/AndyPWarren/slot-car-server/internal/socket"
+	"github.com/AndyPWarren/slot-car-server/internal/utils"
 )
 
 func getPins(w http.ResponseWriter, r *http.Request) {
